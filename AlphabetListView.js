@@ -9,17 +9,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { PanResponder, View } from 'react-native';
 import Toast from 'react-native-root-toast';
-import { SectionListItem } from './SectionListItem';
 
 let toast = null;
 
-export function AlphabetListView({
-  contentHeight,
-  pageY,
-  titles,
-  onSelect,
-  selectAlphabet
-}) {
+export function AlphabetListView({ contentHeight, pageY, titles, onSelect, selectAlphabet, item }) {
   const itemHeight = contentHeight / titles.length;
 
   const onTouchChange = (evt, type) => {
@@ -46,7 +39,7 @@ export function AlphabetListView({
             width: 70,
             justifyContent: 'center',
             alignItems: 'center',
-            backgroundColor: 'rgba(0,0,0,0.5)'
+            backgroundColor: 'rgba(0,0,0,0.3)'
           },
           textStyle: {
             color: 'white',
@@ -62,9 +55,9 @@ export function AlphabetListView({
   const responder = PanResponder.create({
     // 要求成为响应者：
     onStartShouldSetPanResponderCapture: () => true,
-    onMoveShouldSetPanResponderCapture: () => {},
+    onMoveShouldSetPanResponderCapture: () => { },
     onStartShouldSetPanResponder: () => true,
-    onMoveShouldSetPanResponder: () => {},
+    onMoveShouldSetPanResponder: () => { },
     onPanResponderTerminationRequest: () => true,
     onPanResponderGrant: evt => onTouchChange(evt, 'Grant'),
     // onPanResponderStart: evt => onTouchChange(evt, 'Start'),
@@ -76,25 +69,15 @@ export function AlphabetListView({
   return (
     <View
       style={{
+        justifyContent: 'center',
+        alignItems: 'center',
         position: 'absolute',
-        top: 0,
         right: 10,
         zIndex: 10,
         height: contentHeight
       }}
-      {...responder.panHandlers}
-    >
-      {titles.map(title => (
-        <SectionListItem
-          key={title}
-          height={itemHeight}
-          title={title}
-          active={selectAlphabet === title}
-          onPanResponder={() => {
-            toast(title);
-          }}
-        />
-      ))}
+      {...responder.panHandlers}>
+      {titles.map((title, index) => item({ title, active: selectAlphabet === title }))}
     </View>
   );
 }
