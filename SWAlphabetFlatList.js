@@ -130,7 +130,7 @@ export class SWAlphabetFlatList extends Component {
    * 点击字母触发滚动
    */
   onSelect = index => {
-    if (index && this.state.titles[index]) {
+    if (this.state.titles[index]) {
       this.list.scrollToIndex({ index, animated: false });
       this.touchedTime = new Date().getTime();
 
@@ -138,13 +138,11 @@ export class SWAlphabetFlatList extends Component {
       if (this.oldIndex !== index) {
         this.oldIndex = index;
         this.props.onSelect ? this.props.onSelect(index) : null;
-      }
 
-      InteractionManager.runAfterInteractions(() => {
         this.setState({
           selectAlphabet: this.state.titles[index]
         });
-      });
+      }
     }
   };
 
@@ -159,10 +157,8 @@ export class SWAlphabetFlatList extends Component {
         return;
       }
 
-      InteractionManager.runAfterInteractions(() => {
-        this.setState({
-          selectAlphabet: viewableItems[0].item
-        });
+      this.setState({
+        selectAlphabet: viewableItems[0].item
       });
     }
   };
@@ -195,7 +191,6 @@ export class SWAlphabetFlatList extends Component {
     return (
       <View
         style={{
-          alignItems: 'center',
           justifyContent: 'center',
           flex: 1
         }}

@@ -39,7 +39,7 @@ export function AlphabetListView({ onLayout, container, contentHeight, pageY, ti
             width: 70,
             justifyContent: 'center',
             alignItems: 'center',
-            backgroundColor: 'rgba(0,0,0,0.3)'
+            backgroundColor: 'black'
           },
           textStyle: {
             color: 'white',
@@ -74,7 +74,7 @@ export function AlphabetListView({ onLayout, container, contentHeight, pageY, ti
         justifyContent: 'center',
         alignItems: 'center',
         position: 'absolute',
-        right: 10,
+        right: 5,
         zIndex: 10
       }}
       {...responder.panHandlers}>
