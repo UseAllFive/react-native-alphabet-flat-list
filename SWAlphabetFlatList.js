@@ -115,7 +115,7 @@ export class SWAlphabetFlatList extends Component {
   onLayout = ({ nativeEvent: { layout } }) => {
     // 保证导航动画完成之后在进行获取位置坐标 否则会不准确
     InteractionManager.runAfterInteractions(() => {
-      this.container.measure((x, y, w, h, px, py) => {
+      this.alphabet.measure((x, y, w, h, px, py) => {
         this.setState({
           pageY: py
         });
@@ -130,20 +130,22 @@ export class SWAlphabetFlatList extends Component {
    * 点击字母触发滚动
    */
   onSelect = index => {
-    this.list.scrollToIndex({ index, animated: false });
-    this.touchedTime = new Date().getTime();
+    if (index && this.state.titles[index]) {
+      this.list.scrollToIndex({ index, animated: false });
+      this.touchedTime = new Date().getTime();
 
-    // Only emit when different index has been selected
-    if (this.oldIndex !== index) {
-      this.oldIndex = index;
-      this.props.onSelect ? this.props.onSelect(index) : null;
-    }
+      // Only emit when different index has been selected
+      if (this.oldIndex !== index) {
+        this.oldIndex = index;
+        this.props.onSelect ? this.props.onSelect(index) : null;
+      }
 
-    InteractionManager.runAfterInteractions(() => {
-      this.setState({
-        selectAlphabet: this.state.titles[index]
+      InteractionManager.runAfterInteractions(() => {
+        this.setState({
+          selectAlphabet: this.state.titles[index]
+        });
       });
-    });
+    }
   };
 
   /**
@@ -193,12 +195,13 @@ export class SWAlphabetFlatList extends Component {
     return (
       <View
         style={{
+          alignItems: 'center',
+          justifyContent: 'center',
           flex: 1
         }}
         ref={ref => {
           this.container = ref;
-        }}
-        onLayout={this.onLayout}>
+        }}>
         <FlatList
           ref={ref => {
             this.list = ref;
@@ -212,7 +215,9 @@ export class SWAlphabetFlatList extends Component {
           onViewableItemsChanged={this.onViewableItemsChanged}
         />
         <AlphabetListView
+          container={ref => (this.alphabet = ref)}
           pageY={this.state.pageY}
+          onLayout={this.onLayout}
           contentHeight={this.state.containerHeight}
           item={this.props.sectionItemComponent}
           titles={this.state.titles}

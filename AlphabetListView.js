@@ -12,7 +12,7 @@ import Toast from 'react-native-root-toast';
 
 let toast = null;
 
-export function AlphabetListView({ contentHeight, pageY, titles, onSelect, selectAlphabet, item }) {
+export function AlphabetListView({ onLayout, container, contentHeight, pageY, titles, onSelect, selectAlphabet, item }) {
   const itemHeight = contentHeight / titles.length;
 
   const onTouchChange = (evt, type) => {
@@ -21,7 +21,7 @@ export function AlphabetListView({ contentHeight, pageY, titles, onSelect, selec
 
     // console.log('AlphabetListView.onTouchChange()', event.pageY, index, type);
 
-    if (index >= 0) {
+    if (index >= 0 && titles[index]) {
       if (toast) {
         setTimeout(() => {
           toast && Toast.hide(toast);
@@ -68,13 +68,14 @@ export function AlphabetListView({ contentHeight, pageY, titles, onSelect, selec
 
   return (
     <View
+      ref={ref => container(ref)}
+      onLayout={onLayout}
       style={{
         justifyContent: 'center',
         alignItems: 'center',
         position: 'absolute',
         right: 10,
-        zIndex: 10,
-        height: contentHeight
+        zIndex: 10
       }}
       {...responder.panHandlers}>
       {titles.map((title, index) => item({ title, active: selectAlphabet === title }))}
