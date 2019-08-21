@@ -6,7 +6,7 @@
  * Desc: 自定义带字母的滚动列表
  */
 import React, { Component } from 'react';
-import { View, FlatList, InteractionManager, Dimensions } from 'react-native';
+import { View, InteractionManager, Dimensions, ScrollView } from 'react-native';
 import PropTypes from 'prop-types';
 import { SectionHeader } from './SectionHeader';
 import { AlphabetListView } from './AlphabetListView';
@@ -131,7 +131,8 @@ export class SWAlphabetFlatList extends Component {
    */
   onSelect = index => {
     if (this.state.titles[index]) {
-      this.list.scrollToIndex({ index, animated: false });
+      const { length, offset } = this.getItemLayout(index);
+      this.list.scrollTo({ x: 0, y: offset, animated: false });
       this.touchedTime = new Date().getTime();
 
       // Only emit when different index has been selected
@@ -163,17 +164,17 @@ export class SWAlphabetFlatList extends Component {
     }
   };
 
-  getItemLayout = (data, index) => ({
+  getItemLayout = index => ({
     length: this.state.itemLayout[index].length,
     offset: this.state.itemLayout[index].offset,
     index
   });
 
-  renderItem = ({ item }) => {
+  renderItem = item => {
     const MSectionHeader = this.props.sectionHeaderComponent;
 
     return (
-      <View>
+      <View key={item}>
         <MSectionHeader title={item} />
         {this.props.data[item].map((itemValue, itemIndex, items) =>
           this.props.renderItem({
@@ -197,18 +198,14 @@ export class SWAlphabetFlatList extends Component {
         ref={ref => {
           this.container = ref;
         }}>
-        <FlatList
+        <ScrollView
           ref={ref => {
             this.list = ref;
           }}
-          {...this.props}
-          data={this.state.titles}
-          renderItem={this.renderItem}
-          keyExtractor={(item, index) => index.toString()}
-          getItemLayout={this.getItemLayout}
-          initialNumToRender={this.state.initialNumToRender}
-          onViewableItemsChanged={this.onViewableItemsChanged}
-        />
+          {...this.props}>
+          {this.props.renderHeader ? this.props.renderHeader() : null}
+          {this.state.titles.map(item => this.renderItem(item))}
+        </ScrollView>
         <AlphabetListView
           container={ref => (this.alphabet = ref)}
           pageY={this.state.pageY}
